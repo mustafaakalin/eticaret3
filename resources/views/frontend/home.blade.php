@@ -18,6 +18,7 @@
     <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center">Featured Products</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
       @foreach($featuredProducts as $product)
+      <a href="{{ route('product.show' , $product->slug) }}">
         <div class="card bg-base-100 shadow-xl">
           
           <figure class="overflow-hidden">
@@ -49,6 +50,7 @@
             </div>
           </div>
         </div>
+      </a>
       @endforeach
     </div>
   </section>

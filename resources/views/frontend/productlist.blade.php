@@ -24,7 +24,7 @@
 <section class="p-4 sm:p-10">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
         @foreach ($products as $product)
-            <a href="{{ route('product.show', $product->id) }}">
+            <a href="{{ route('product.show', $product->slug) }}">
                 <div class="bg-base-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 p-4 flex flex-col items-center transform hover:-translate-y-1">
                     <figure class="w-full">
                         <img src="{{ $product->images->isNotEmpty() ? asset('storage/' . $product->images->first()->image_path) : asset('default_image.jpg') }}" 
@@ -50,50 +50,6 @@
     </div>
 </section>
 
-<!-- Success and Error Modals (unchanged) -->
-@if(session('success'))
-<div id="successModal" class="modal modal-open">
-    <div class="modal-box">
-        <h3 class="font-bold text-lg text-green-600">Success!</h3>
-        <p class="py-4">{{ session('success') }}</p>
-        <div class="modal-action">
-            <button onclick="closeModal('successModal')" class="btn btn-primary">Close</button>
-        </div>
-    </div>
-</div>
-@endif
 
-@if(session('error'))
-<div id="errorModal" class="modal modal-open">
-    <div class="modal-box">
-        <h3 class="font-bold text-lg text-red-600">Error!</h3>
-        <p class="py-4">{{ session('error') }}</p>
-        <div class="modal-action">
-            <button onclick="closeModal('errorModal')" class="btn btn-primary">Close</button>
-        </div>
-    </div>
-</div>
-@endif
-
-<script>
-    // Modal close function
-    function closeModal(modalId) {
-        document.getElementById(modalId).classList.remove('modal-open');
-    }
-
-    // Automatically close the modal after a few seconds
-    window.addEventListener('DOMContentLoaded', (event) => {
-        const successModal = document.getElementById('successModal');
-        const errorModal = document.getElementById('errorModal');
-
-        if (successModal) {
-            setTimeout(() => closeModal('successModal'), 3000); // Closes after 3 seconds
-        }
-        
-        if (errorModal) {
-            setTimeout(() => closeModal('errorModal'), 3000); // Closes after 3 seconds
-        }
-    });
-</script>
 
 @endsection

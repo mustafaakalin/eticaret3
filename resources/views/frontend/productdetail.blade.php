@@ -2,16 +2,33 @@
 
 @section('content')
 
-
-
-
-
 <!-- Product Details Section -->
 <section class="p-8 md:p-12 lg:p-16 bg-gradient-to-b from-base-200 to-base-100">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-    <!-- Product Image -->
+    <!-- Product Image Carousel -->
     <figure class="w-full h-full bg-white rounded-lg shadow-lg overflow-hidden">
-      <img src="{{ $product->images->isNotEmpty() ? asset('storage/' . $product->images->first()->image_path) : asset('default_image.jpg') }}" alt="Product Image" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+      @if($product->images->count() > 1)
+      <!-- DaisyUI Carousel for Multiple Images -->
+      <div class="carousel w-full h-full">
+        @foreach($product->images as $index => $image)
+        <div id="slide{{ $index + 1 }}" class="carousel-item relative w-full">
+          <img src="{{ asset('storage/' . $image->image_path) }}" alt="Product Image"
+              class="w-full h-full object-cover">
+
+          <!-- Carousel Navigation Buttons -->
+          <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+            <a href="#slide{{ $index == 0 ? $product->images->count() : $index }}" class="btn btn-circle">❮</a>
+            <a href="#slide{{ $index + 2 > $product->images->count() ? 1 : $index + 2 }}" class="btn btn-circle">❯</a>
+          </div>
+        </div>
+        @endforeach
+      </div>
+
+      @else
+      <!-- Single Image Display -->
+      <img src="{{ $product->images->isNotEmpty() ? asset('storage/' . $product->images->first()->image_path) : asset('default_image.jpg') }}"
+          alt="Product Image" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+      @endif
     </figure>
 
     <!-- Product Information -->
@@ -41,7 +58,7 @@
         <h3 class="text-xl font-bold text-gray-700 mb-2">Tags:</h3>
         <div class="flex flex-wrap gap-2">
           @foreach($product->tags as $tag)
-            <span class="badge badge-outline badge-primary text-sm">{{ $tag->name }}</span>
+          <span class="badge badge-outline badge-primary text-sm">{{ $tag->name }}</span>
           @endforeach
         </div>
       </div>
@@ -49,23 +66,26 @@
   </div>
 </section>
 
-
-
 <!-- Customer Reviews Section -->
 <section class="p-8 md:p-12 lg:p-16 bg-base-200">
   <h2 class="text-4xl font-bold text-center mb-10">Customer Reviews</h2>
 
   @forelse($comments as $comment)
-    <div class="p-6 bg-white rounded-lg shadow-lg mb-6 max-w-3xl mx-auto">
-      <div class="flex items-center justify-between">
-        <h3 class="text-2xl font-bold text-gray-800">{{ $comment->user->name }}</h3>
-        <p class="text-sm text-gray-500">{{ $comment->created_at->format('F j, Y') }}</p>
-      </div>
-      <p class="text-gray-700 mt-4">{{ $comment->comment }}</p>
-      <p class="text-yellow-500 text-lg mt-2">{{ str_repeat('★', $comment->rating) }}</p>
+  <div class="p-6 bg-white rounded-lg shadow-lg mb-6 max-w-3xl mx-auto">
+    <div class="flex items-center justify-between">
+      <h3 class="text-2xl font-bold text-gray-800">{{ $comment->user->name }}</h3>
+      <p class="text-sm text-gray-500">{{ $comment->created_at->format('F j, Y') }}</p>
     </div>
+    <p class="text-gray-700 mt-4">{{ $comment->comment }}</p>
+    <!-- DaisyUI Rating Component for Customer Rating -->
+    <div class="rating mt-2">
+      @for ($i = 1; $i <= $comment->rating; $i++)
+      <input type="radio" name="rating-{{ $comment->id }}" class="mask mask-star-2 bg-yellow-400" disabled value="{{ $i }}" {{ $i == $comment->rating ? 'checked=checked' : '' }} />
+    @endfor
+    </div>
+  </div>
   @empty
-    <p class="text-center text-gray-500">There are no reviews for this product yet.</p>
+  <p class="text-center text-gray-500">There are no reviews for this product yet.</p>
   @endforelse
 </section>
 
@@ -84,7 +104,7 @@
         <option value="1">★☆☆☆☆ - Very Poor</option>
       </select>
       @error('rating')
-        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+      <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
       @enderror
     </div>
 
@@ -92,62 +112,12 @@
       <label for="comment" class="block font-medium text-lg text-gray-800">Comment</label>
       <textarea name="comment" id="comment" rows="4" class="textarea textarea-bordered w-full" required></textarea>
       @error('comment')
-        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+      <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
       @enderror
     </div>
 
     <button type="submit" class="btn btn-primary w-full">Submit Review</button>
   </form>
 </section>
-
-
-<!-- Success Modal -->
-@if(session('success'))
-<div id="successModal" class="modal modal-open">
-  <div class="modal-box">
-    <h3 class="font-bold text-lg text-green-600">Success!</h3>
-    <p class="py-4">{{ session('success') }}</p>
-    <div class="modal-action">
-      <button onclick="closeModal('successModal')" class="btn btn-primary">Close</button>
-    </div>
-  </div>
-</div>
-@endif
-
-<!-- Error Modal -->
-@if(session('error'))
-<div id="errorModal" class="modal modal-open">
-  <div class="modal-box">
-    <h3 class="font-bold text-lg text-red-600">Error!</h3>
-    <p class="py-4">{{ session('error') }}</p>
-    <div class="modal-action">
-      <button onclick="closeModal('errorModal')" class="btn btn-primary">Close</button>
-    </div>
-  </div>
-</div>
-@endif
-
-<script>
-  // Modal close function
-  function closeModal(modalId) {
-    document.getElementById(modalId).classList.remove('modal-open');
-  }
-
-  // Automatically close the modal after a few seconds
-  window.addEventListener('DOMContentLoaded', (event) => {
-    const successModal = document.getElementById('successModal');
-    const errorModal = document.getElementById('errorModal');
-
-    if (successModal) {
-      setTimeout(() => closeModal('successModal'), 3000); // Closes after 3 seconds
-    }
-    
-    if (errorModal) {
-      setTimeout(() => closeModal('errorModal'), 3000); // Closes after 3 seconds
-    }
-  });
-</script>
-
-
 
 @endsection

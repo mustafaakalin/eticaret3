@@ -1,4 +1,4 @@
-<nav class="navbar bg-base-200 sticky z-10 top-0">
+<nav class="navbar backdrop-blur-md bg-base-100/50  z-10 top-0 fixed">
     <div class="container mx-auto flex justify-between items-center">
 
         <!-- Logo Bölümü -->
@@ -24,32 +24,178 @@
             </div>
 
             <!-- Tema Seçimi -->
-            <div class="ml-4">
-                <select onchange="changeTheme(this.value)" class="select select-bordered">
-                    <option value="light">Light</option>
-                    <option value="dark">Dark</option>
-                    <option value="cupcake">Cupcake</option>
-                    <option value="bumblebee">Bumblebee</option>
-                    <option value="emerald">Emerald</option>
-                    <option value="corporate">Corporate</option>
-                    <option value="synthwave">Synthwave</option>
-                    <option value="retro">Retro</option>
-                    <option value="cyberpunk">Cyberpunk</option>
-                    <option value="valentine">Valentine</option>
-                    <option value="halloween">Halloween</option>
-                    <option value="forest">Forest</option>
-                    <option value="aqua">Aqua</option>
-                    <option value="lofi">Lofi</option>
-                    <option value="pastel">Pastel</option>
-                    <option value="fantasy">Fantasy</option>
-                    <option value="wireframe">Wireframe</option>
-                    <option value="black">Black</option>
-                    <option value="luxury">Luxury</option>
-                    <option value="dracula">Dracula</option>
-                    <option value="cmyk">CMYK</option>
-                    <option value="autumn">Autumn</option>
-                    <option value="business">Business</option>
-                </select>
+            
+            <div class="dropdown  dropdown-end">
+                <div tabindex="0" role="button" class="btn m-1">
+                    Theme
+                    <svg width="12px" height="12px" class="inline-block h-2 w-2 fill-current opacity-60"
+                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048">
+                        <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
+                    </svg>
+                </div>
+                <ul tabindex="0" class="dropdown-content bg-base-300 rounded-box z-[1] w-52 p-2 shadow-2xl max-h-60 overflow-y-auto">
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Light" value="light" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Dark" value="dark" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Cupcake" value="cupcake" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Bumblebee" value="bumblebee" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Emerald" value="emerald" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Corporate" value="corporate" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Synthwave" value="synthwave" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Retro" value="retro" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Cyberpunk" value="cyberpunk" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Valentine" value="valentine" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Halloween" value="halloween" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Garden" value="garden" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Forest" value="forest" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Aqua" value="aqua" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Lofi" value="lofi" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Pastel" value="pastel" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Fantasy" value="fantasy" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Wireframe" value="wireframe" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Black" value="black" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Luxury" value="luxury" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Dracula" value="dracula" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="CMYK" value="cmyk" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Autumn" value="autumn" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Business" value="business" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Acid" value="acid" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Lemonade" value="lemonade" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Night" value="night" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Coffee" value="coffee" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Winter" value="winter" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Dim" value="dim" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Nord" value="nord" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Sunset" value="sunset" />
+                    </li>
+                </ul>
+
             </div>
 
             <!-- Navigasyon Linkleri -->
@@ -91,31 +237,178 @@
             </div>
 
             <!-- Tema Seçimi -->
-            <select onchange="changeTheme(this.value)" class="select select-bordered">
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-                <option value="cupcake">Cupcake</option>
-                <option value="bumblebee">Bumblebee</option>
-                <option value="emerald">Emerald</option>
-                <option value="corporate">Corporate</option>
-                <option value="synthwave">Synthwave</option>
-                <option value="retro">Retro</option>
-                <option value="cyberpunk">Cyberpunk</option>
-                <option value="valentine">Valentine</option>
-                <option value="halloween">Halloween</option>
-                <option value="forest">Forest</option>
-                <option value="aqua">Aqua</option>
-                <option value="lofi">Lofi</option>
-                <option value="pastel">Pastel</option>
-                <option value="fantasy">Fantasy</option>
-                <option value="wireframe">Wireframe</option>
-                <option value="black">Black</option>
-                <option value="luxury">Luxury</option>
-                <option value="dracula">Dracula</option>
-                <option value="cmyk">CMYK</option>
-                <option value="autumn">Autumn</option>
-                <option value="business">Business</option>
-            </select>
+            <div class="dropdown dropdown-left">
+                <div tabindex="0" role="button" class="btn m-1">
+                    Theme
+                    <svg width="12px" height="12px" class="inline-block h-2 w-2 fill-current opacity-60"
+                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048">
+                        <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
+                    </svg>
+                </div>
+                <ul tabindex="0" class="dropdown-content bg-base-300 rounded-box z-[1] w-52 p-2 shadow-2xl max-h-60 overflow-y-auto">
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Light" value="light" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Dark" value="dark" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Cupcake" value="cupcake" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Bumblebee" value="bumblebee" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Emerald" value="emerald" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Corporate" value="corporate" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Synthwave" value="synthwave" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Retro" value="retro" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Cyberpunk" value="cyberpunk" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Valentine" value="valentine" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Halloween" value="halloween" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Garden" value="garden" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Forest" value="forest" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Aqua" value="aqua" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Lofi" value="lofi" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Pastel" value="pastel" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Fantasy" value="fantasy" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Wireframe" value="wireframe" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Black" value="black" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Luxury" value="luxury" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Dracula" value="dracula" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="CMYK" value="cmyk" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Autumn" value="autumn" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Business" value="business" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Acid" value="acid" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Lemonade" value="lemonade" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Night" value="night" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Coffee" value="coffee" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Winter" value="winter" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Dim" value="dim" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Nord" value="nord" />
+                    </li>
+                    <li>
+                        <input type="radio" name="theme-dropdown"
+                            class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                            aria-label="Sunset" value="sunset" />
+                    </li>
+                </ul>
+
+            </div>
 
             <!-- Navigasyon Linkleri -->
             <a class="btn btn-ghost w-full" href="/">Home</a>
@@ -132,3 +425,4 @@
           menu.classList.toggle('hidden');
         }
 </script>
+

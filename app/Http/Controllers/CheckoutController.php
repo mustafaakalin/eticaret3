@@ -21,13 +21,10 @@ class CheckoutController extends Controller
         // Kullanıcının sepetini al
         $userId = Auth::id();
         $cart = Cart::where('user_id', $userId)->with('cartItems.product')->first();
-        
-
-
 
         // Sepet yoksa yönlendirme yap
-        if (!$cart) {
-            return redirect()->route('cart.view')->with('message', 'Sepetinizde ürün yok. Lütfen ürün ekleyin.');
+        if (!$cart || $cart->cartItems->isEmpty()) {
+            return redirect()->route('cart.view')->with('warning', 'Sepetinizde ürün yok. Lütfen ürün ekleyin.');
         }
 
         // Toplam fiyatı hesapla
@@ -35,30 +32,29 @@ class CheckoutController extends Controller
             return $item->product->price * $item->quantity;
         });
 
-        // Eğer cartItems boşsa da yönlendirme yapabilirsiniz
-        if ($cart->cartItems->isEmpty()) {
-            return redirect()->route('cart.view')->with('message', 'Sepetinizde ürün yok. Lütfen ürün ekleyin.');
-        }
-
         // Checkout sayfasına veri geç
         return view('frontend.checkout', compact('cart', 'totalPrice'));
-
     }
 
     public function process(Request $request)
     {
         // Validasyon
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'surname' => 'required|string|max:255', // Soyadı ekleyin
-            'email' => 'required|email|max:255',
-            'address' => 'required|string',
-            'city' => 'required|string',
-            'zip_code' => 'required|string',
-            'card_number' => 'required|string',
-            'expiry_date' => 'required|string',
-            'cvc' => 'required|string',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'surname' => 'required|string|max:255',
+                'email' => 'required|email|max:255|regex:/^.+@.+$/i',
+                'address' => 'required|string|max:500',
+                'city' => 'required|string|max:255',
+                'zip_code' => 'required|string|max:20',
+                'card_number' => 'required|string|max:16',
+                'expiry_date' => 'required|string',
+                'cvc' => 'required|string|max:4',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+        
 
         // Kullanıcının sepetini al
         $userId = Auth::id();
@@ -74,7 +70,7 @@ class CheckoutController extends Controller
         $paymentRequest->setLocale('tr');
         $paymentRequest->setConversationId(uniqid());
         $paymentRequest->setPrice($totalPrice);
-        $paymentRequest->setPaidPrice($totalPrice); // Ödenecek fiyat (örnek olarak) vergi falan kargo ücreti eklenmek isterse $paymentRequest->setPaidPrice($totalPrice * 1.2);
+        $paymentRequest->setPaidPrice($totalPrice);
         $paymentRequest->setCurrency('TRY');
         $paymentRequest->setPaymentChannel('WEB');
         $paymentRequest->setPaymentGroup('PRODUCT');
@@ -83,54 +79,50 @@ class CheckoutController extends Controller
         $buyer = new \Iyzipay\Model\Buyer();
         $buyer->setId(uniqid());
         $buyer->setName($request->input('name'));
-        $buyer->setSurname($request->input('surname')); // Soyadı ekleniyor
+        $buyer->setSurname($request->input('surname'));
         $buyer->setEmail($request->input('email'));
-        $buyer->setIdentityNumber('11111111111'); // Örnek kimlik numarası
+        $buyer->setIdentityNumber('11111111111'); // Kimlik numarası yerine daha güvenli bir uygulama kullanılabilir
         $buyer->setRegistrationAddress($request->input('address'));
         $buyer->setIp($request->ip());
-        $buyer->setCity($request->input('city')); // Şehir bilgisi ekleniyor
+        $buyer->setCity($request->input('city'));
         $buyer->setCountry('Turkey');
-        $buyer->setZipCode($request->input('zip_code')); // Posta kodu bilgisi ekleniyor
+        $buyer->setZipCode($request->input('zip_code'));
 
         $paymentRequest->setBuyer($buyer);
 
-        // Billing Address (Fatura Adresi) bilgilerini ekle
+        // Billing Address
         $billingAddress = new \Iyzipay\Model\Address();
         $billingAddress->setContactName($request->input('name') . ' ' . $request->input('surname'));
         $billingAddress->setCity($request->input('city'));
-        $billingAddress->setCountry("Turkey");
+        $billingAddress->setCountry('Turkey');
         $billingAddress->setAddress($request->input('address'));
         $billingAddress->setZipCode($request->input('zip_code'));
         $paymentRequest->setBillingAddress($billingAddress);
-        
 
-
-
-        // Shipping Address (Gönderim Adresi) bilgilerini ekle
+        // Shipping Address
         $shippingAddress = new \Iyzipay\Model\Address();
-        $shippingAddress->setContactName($request->input('name') . ' ' . $request->input('surname')); // İsim ve soyisim
+        $shippingAddress->setContactName($request->input('name') . ' ' . $request->input('surname'));
         $shippingAddress->setCity($request->input('city'));
         $shippingAddress->setCountry('Turkey');
         $shippingAddress->setAddress($request->input('address'));
         $shippingAddress->setZipCode($request->input('zip_code'));
-
         $paymentRequest->setShippingAddress($shippingAddress);
 
-        // Sepetteki her ürün için ayrı bir sepet oluştur
+        // Sepetteki her ürün için sepet oluştur
         $basketItems = [];
         foreach ($cart->cartItems as $cartItem) {
             $basketItem = new BasketItem();
             $basketItem->setId('BI_' . $cartItem->product->id);
             $basketItem->setName($cartItem->product->name);
-            $basketItem->setCategory1($cartItem->product->category->name); // Kategori adını ayarlayın
-            $basketItem->setItemType(\Iyzipay\Model\BasketItemType::PHYSICAL); // Ürün türü
-            $basketItem->setPrice($cartItem->product->price * $cartItem->quantity); // Ürün fiyatı
+            $basketItem->setCategory1($cartItem->product->category->name);
+            $basketItem->setItemType(\Iyzipay\Model\BasketItemType::PHYSICAL);
+            $basketItem->setPrice($cartItem->product->price * $cartItem->quantity);
             $basketItems[] = $basketItem;
         }
         
         $paymentRequest->setBasketItems($basketItems);
 
-        // Kart bilgilerini ekleyin
+        // Kart bilgileri
         $paymentCard = new \Iyzipay\Model\PaymentCard();
         $paymentCard->setCardHolderName($request->input('name'));
         $paymentCard->setCardNumber($request->input('card_number'));
@@ -153,37 +145,37 @@ class CheckoutController extends Controller
 
         if ($payment->getStatus() == 'success') {
             // Ödeme başarılı, sipariş oluştur
-        
-        // 1. Order oluştur
-        $order = Order::create([
-            'user_id' => $userId,
-            'total_price' => $totalPrice,
-            'status' => 'pending',  // İlk durumda sipariş durumu beklemede olabilir
-        ]);
-
-        // 2. OrderItems oluştur
-        foreach ($cart->cartItems as $cartItem) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $cartItem->product->id,
-                'quantity' => $cartItem->quantity,
-                'price' => $cartItem->product->price,
+            
+            // Order oluştur
+            $order = Order::create([
+                'user_id' => $userId,
+                'total_price' => $totalPrice,
+                'status' => 'pending',  // Sipariş durumu
             ]);
-        }
 
-        // 3. Sepet ve sepet öğelerini sil
-        $cart->cartItems()->delete(); // Sepet öğelerini sil
-        $cart->delete(); // Sepeti sil
+            // OrderItems oluştur
+            foreach ($cart->cartItems as $cartItem) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $cartItem->product->id,
+                    'quantity' => $cartItem->quantity,
+                    'price' => $cartItem->product->price,
+                ]);
+            }
 
-         // 4. Sipariş onay e-postasını gönder
-        Mail::to($request->input('email'))->send(new OrderConfirmationMail($order));
+            // Sepet ve sepet öğelerini sil
+            $cart->cartItems()->delete(); // Sepet öğelerini sil
+            $cart->delete(); // Sepeti sil
 
-        return redirect()->route('checkout.success')->with('message', 'Sipariş bilgileriniz  mail gönderilmiştir.');
+            // Sipariş onay e-postasını gönder
+            Mail::to($request->input('email'))->send(new OrderConfirmationMail($order));
+
+            return redirect()->route('checkout.success')->with('success', 'Sipariş bilgileriniz e-posta ile gönderilmiştir.');
 
         } else {
             // Ödeme hatası
             $errorMessage = $payment->getErrorMessage();
-            return redirect()->route('checkout.failure')->with('message', $errorMessage); // Başarısız durumda yönlendirme
+            return redirect()->route('checkout.failure')->with('error', $errorMessage); // Başarısız durumda yönlendirme
         }
     }
 }
