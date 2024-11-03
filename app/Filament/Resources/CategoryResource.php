@@ -18,21 +18,27 @@ class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $navigationIcon = 'heroicon-o-tag'; // Icon for categories
+    protected static ?string $navigationGroup = 'Ürün Yönetimi'; // Group name
+    
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->label('Kategori Adı'),
+                    
                 Forms\Components\Textarea::make('description')
+                    ->label('Açıklama')
                     ->columnSpanFull(),
-                Select::make('parent_id') // parent_id kullanılmalı
+                    
+                Select::make('parent_id')
                     ->relationship('parent', 'name')
                     ->label('Ebeveyn Kategori')
-                    ->nullable(), // Nullable yaparak boş bırakılmasına izin veriyoruz
+                    ->nullable()
+                    ->searchable(), // Allow searching for parent categories
             ]);
     }
 
@@ -41,18 +47,24 @@ class CategoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('parent.name') // Ebeveyn kategori adı
+                    ->label('Kategori Adı')
+                    ->searchable()
+                    ->sortable(),
+                    
+                Tables\Columns\TextColumn::make('parent.name')
                     ->label('Ebeveyn Kategori')
                     ->sortable(),
+                    
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                    
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                    
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
@@ -77,7 +89,7 @@ class CategoryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            // Add relation managers if necessary, e.g., products in this category
         ];
     }
 

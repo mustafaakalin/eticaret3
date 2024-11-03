@@ -6,13 +6,14 @@ namespace App\Models;
 use Filament\Panel;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Traits\HasRoles;
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable  implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasAvatar
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable,HasRoles,SoftDeletes;
@@ -24,8 +25,15 @@ class User extends Authenticatable  implements FilamentUser
      */
     protected $fillable = [
         'name',
+        'surname', // New field
         'email',
         'password',
+        'identity_number', // New field
+        'address', // New field
+        'city', // New field
+        'country', // New field
+        'zip_code', // New field
+        'avatar', // New field
     ];
 
     /**
@@ -57,7 +65,12 @@ class User extends Authenticatable  implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         // Kullanıcının admin rolüne sahip olup olmadığını kontrol et
-        return $this->hasRole('admin');
+        return true;
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return "/storage/" .$this->avatar;
     }
 
     public function comments()

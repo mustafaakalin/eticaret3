@@ -10,7 +10,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="mb-6">
                 <label for="name" class="block text-sm font-medium text-gray-700">Adınız</label>
-                <input type="text" name="name" id="name" required class="input input-bordered w-full mt-1" placeholder="Adınızı girin">
+                <input type="text" name="name" id="name" required class="input input-bordered w-full mt-1" placeholder="Adınızı girin" value="{{ old('name', $user->name) }}">
                 @error('name')
                     <p class="text-red-600 text-sm">{{ $message }}</p>
                 @enderror
@@ -18,7 +18,7 @@
 
             <div class="mb-6">
                 <label for="surname" class="block text-sm font-medium text-gray-700">Soyadınız</label>
-                <input type="text" name="surname" id="surname" required class="input input-bordered w-full mt-1" placeholder="Soyadınızı girin">
+                <input type="text" name="surname" id="surname" required class="input input-bordered w-full mt-1" placeholder="Soyadınızı girin" value="{{ old('surname', $user->surname) }}">
                 @error('surname')
                     <p class="text-red-600 text-sm">{{ $message }}</p>
                 @enderror
@@ -26,7 +26,7 @@
 
             <div class="mb-6">
                 <label for="email" class="block text-sm font-medium text-gray-700">E-posta</label>
-                <input type="email" name="email" id="email" required class="input input-bordered w-full mt-1" placeholder="E-posta adresinizi girin">
+                <input type="email" name="email" id="email" required class="input input-bordered w-full mt-1" placeholder="E-posta adresinizi girin" value="{{ old('email', $user->email) }}">
                 @error('email')
                     <p class="text-red-600 text-sm">{{ $message }}</p>
                 @enderror
@@ -34,7 +34,7 @@
 
             <div class="mb-6">
                 <label for="address" class="block text-sm font-medium text-gray-700">Adres</label>
-                <textarea name="address" id="address" required class="input input-bordered w-full mt-1" placeholder="Adresinizi girin"></textarea>
+                <textarea name="address" id="address" required class="input input-bordered w-full mt-1" placeholder="Adresinizi girin">{{ old('address', $user->address) }}</textarea>
                 @error('address')
                     <p class="text-red-600 text-sm">{{ $message }}</p>
                 @enderror
@@ -42,7 +42,7 @@
 
             <div class="mb-6">
                 <label for="city" class="block text-sm font-medium text-gray-700">Şehir</label>
-                <input type="text" name="city" id="city" required class="input input-bordered w-full mt-1" placeholder="Şehir girin">
+                <input type="text" name="city" id="city" required class="input input-bordered w-full mt-1" placeholder="Şehir girin" value="{{ old('city', $user->city) }}">
                 @error('city')
                     <p class="text-red-600 text-sm">{{ $message }}</p>
                 @enderror
@@ -50,7 +50,7 @@
 
             <div class="mb-6">
                 <label for="zip_code" class="block text-sm font-medium text-gray-700">Posta Kodu</label>
-                <input type="text" name="zip_code" id="zip_code" required class="input input-bordered w-full mt-1" placeholder="Posta kodunu girin">
+                <input type="text" name="zip_code" id="zip_code" required class="input input-bordered w-full mt-1" placeholder="Posta kodunu girin" value="{{ old('zip_code', $user->zip_code) }}">
                 @error('zip_code')
                     <p class="text-red-600 text-sm">{{ $message }}</p>
                 @enderror

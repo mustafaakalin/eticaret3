@@ -5,36 +5,64 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use Iyzipay\Options;
 use App\Models\Order;
+use GuzzleHttp\Client;
 use App\Models\OrderItem;
 use Iyzipay\Model\Payment;
 use Illuminate\Http\Request;
 use Iyzipay\Model\BasketItem;
-use Illuminate\Support\Facades\Auth;
-use Iyzipay\Request\CreatePaymentRequest;
 use App\Mail\OrderConfirmationMail;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Iyzipay\Request\CreatePaymentRequest;
 
 class CheckoutController extends Controller
 {
-    public function index()
-    {
-        // Kullanıcının sepetini al
-        $userId = Auth::id();
-        $cart = Cart::where('user_id', $userId)->with('cartItems.product')->first();
 
-        // Sepet yoksa yönlendirme yap
-        if (!$cart || $cart->cartItems->isEmpty()) {
-            return redirect()->route('cart.view')->with('warning', 'Sepetinizde ürün yok. Lütfen ürün ekleyin.');
+
+
+    function sendTelegramMessage($message) {
+        $telegramBotToken = env('TELEGRAM_BOT_TOKEN');
+        $chatId = env('TELEGRAM_CHAT_ID');
+        $client = new Client();
+        
+        try {
+            $client->post("https://api.telegram.org/bot{$telegramBotToken}/sendMessage", [
+                'form_params' => [
+                    'chat_id' => $chatId,
+                    'text' => $message,
+                    'parse_mode' => 'HTML', // Optional: For formatting
+                ],
+            ]);
+        } catch (\Exception $e) {
+            // Handle exceptions if needed
+            \Log::error("Telegram API error: " . $e->getMessage());
         }
-
-        // Toplam fiyatı hesapla
-        $totalPrice = $cart->cartItems->sum(function ($item) {
-            return $item->product->price * $item->quantity;
-        });
-
-        // Checkout sayfasına veri geç
-        return view('frontend.checkout', compact('cart', 'totalPrice'));
     }
+    
+
+    public function index()
+{
+    // Kullanıcının sepetini al
+    $userId = Auth::id();
+    $cart = Cart::where('user_id', $userId)->with('cartItems.product')->first();
+
+    // Sepet yoksa yönlendirme yap
+    if (!$cart || $cart->cartItems->isEmpty()) {
+        return redirect()->route('cart.view')->with('warning', 'Sepetinizde ürün yok. Lütfen ürün ekleyin.');
+    }
+
+    // Toplam fiyatı hesapla
+    $totalPrice = $cart->cartItems->sum(function ($item) {
+        return $item->product->price * $item->quantity;
+    });
+
+    // Kullanıcı bilgilerini al
+    $user = Auth::user();
+
+    // Checkout sayfasına veri geç
+    return view('frontend.checkout', compact('cart', 'totalPrice', 'user'));
+}
+
 
     public function process(Request $request)
     {
@@ -169,6 +197,14 @@ class CheckoutController extends Controller
 
             // Sipariş onay e-postasını gönder
             Mail::to($request->input('email'))->send(new OrderConfirmationMail($order));
+
+            // Telegram'a bildirim gönder
+            $telegramMessage = "Yeni sipariş alındı!\n";
+            $telegramMessage .= "Sipariş ID: " . $order->id . "\n";
+            $telegramMessage .= "Toplam Fiyat: " . $totalPrice . " ₺\n";
+            $telegramMessage .= "Kullanıcı ID: " . $userId . "\n";
+            $telegramMessage .= "Durum: " . $order->status . "\n";
+            $this->sendTelegramMessage($telegramMessage); // Telegram bildirimi gönder
 
             return redirect()->route('checkout.success')->with('success', 'Sipariş bilgileriniz e-posta ile gönderilmiştir.');
 

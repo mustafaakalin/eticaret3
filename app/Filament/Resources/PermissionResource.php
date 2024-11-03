@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PermissionResource\Pages;
 use App\Filament\Resources\PermissionResource\RelationManagers;
-use Spatie\Permission\Models\Permission;
+use App\Models\Permission;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,8 +17,9 @@ class PermissionResource extends Resource
 {
     protected static ?string $model = Permission::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $navigationIcon = 'heroicon-o-lock-closed'; // Icon for permissions
+    protected static ?string $navigationGroup = 'Kullanıcı Yönetimi'; // Group name
+    
     public static function form(Form $form): Form
     {
         return $form
@@ -29,8 +30,16 @@ class PermissionResource extends Resource
                 Forms\Components\TextInput::make('guard_name')
                     ->required()
                     ->maxLength(255),
+
+                // Rolleri seçmek için çoklu seçim bileşeni
+                Forms\Components\Select::make('roles')
+                    ->multiple()
+                    ->relationship('roles', 'name')
+                    ->label('Roles')
+                    ->preload(),
             ]);
     }
+
 
     public static function table(Table $table): Table
     {
@@ -48,6 +57,12 @@ class PermissionResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
+                // Rolleri listelemek için bir kolon ekleyin
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->label('Roles')
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -64,6 +79,7 @@ class PermissionResource extends Resource
                 ]),
             ]);
     }
+
 
     public static function getRelations(): array
     {

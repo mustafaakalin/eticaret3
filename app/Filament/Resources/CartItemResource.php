@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CartItemResource\Pages;
 use App\Filament\Resources\CartItemResource\RelationManagers;
 use App\Models\CartItem;
+use App\Models\Product; // Ensure you import the Product model
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,21 +18,28 @@ class CartItemResource extends Resource
 {
     protected static ?string $model = CartItem::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart'; // Change to a cart icon
+    protected static ?string $navigationGroup = 'Sepet Yönetimi'; // Grouping under a relevant category
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('cart_id')
+                Forms\Components\Select::make('cart_id')
+                    ->relationship('cart', 'id') // Assuming a Cart relationship
                     ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('product_id')
+                    ->label('Cart ID'),
+                    
+                Forms\Components\Select::make('product_id')
+                    ->relationship('product', 'name') // Use product name for better UX
                     ->required()
-                    ->numeric(),
+                    ->label('Ürün'),
+                    
                 Forms\Components\TextInput::make('quantity')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->minValue(1) // Set minimum quantity to 1
+                    ->label('Miktar'),
             ]);
     }
 
@@ -39,23 +47,29 @@ class CartItemResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('cart_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('product_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('cart.id')
+                    ->sortable()
+                    ->label('Sepet ID'),
+                    
+                Tables\Columns\TextColumn::make('product.name') // Display product name instead of ID
+                    ->sortable()
+                    ->label('Ürün'),
+
                 Tables\Columns\TextColumn::make('quantity')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->label('Miktar'),
+
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                    
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                    
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
@@ -80,7 +94,7 @@ class CartItemResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            // You can add relation managers here if needed
         ];
     }
 

@@ -18,6 +18,13 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
+use DutchCodingCompany\FilamentSocialite\FilamentSocialitePlugin;
+use DutchCodingCompany\FilamentSocialite\Provider;
+use Filament\Support\Colors;
+use Laravel\Socialite\Contracts\User as SocialiteUserContract;
+use Illuminate\Contracts\Auth\Authenticatable;
+
+
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -53,6 +60,38 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])->plugin(
+                FilamentSocialitePlugin::make()
+                    // (required) Add providers corresponding with providers in `config/services.php`.
+                    ->providers([
+                        // Create a provider 'gitlab' corresponding to the Socialite driver with the same name.
+                        Provider::make('github')
+                        ->label('Github')
+                        ->icon('fab-github')
+                        ->scopes([
+                            // Add scopes here.
+                            'read:user',
+                            'public_repo',
+                        ]),
+                        Provider::make('google')
+                        ->label('Google')
+                        ->icon('fab-google')
+                        ->scopes([
+                            // Add scopes here.
+                        ]),
+                    ])
+                    // (optional) Override the panel slug to be used in the oauth routes. Defaults to the panel ID.
+                    ->slug('admin')
+                    // (optional) Enable/disable registration of new (socialite-) users.
+                    ->registration(true)
+                    // (optional) Enable/disable registration of new (socialite-) users using a callback.
+                    // In this example, a login flow can only continue if there exists a user (Authenticatable) already.
+                    ->registration(fn (string $provider, SocialiteUserContract $oauthUser, ?Authenticatable $user) => (bool) $user)
+                    // (optional) Change the associated model class.
+                    ->userModelClass(\App\Models\User::class)
+                    // (optional) Change the associated socialite class (see below).
+                    // ->socialiteUserModelClass(\App\Models\SocialiteUser::class)
+            );
     }
+
 }

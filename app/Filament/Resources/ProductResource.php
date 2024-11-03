@@ -20,18 +20,23 @@ class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack'; // Icon for products
+    protected static ?string $navigationGroup = 'Ürün Yönetimi'; // Group name
+    
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->label('Ürün Adı'),
+                    
                 Forms\Components\TextInput::make('slug')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->label('Slug'),
+                    
                 Repeater::make('images')
                     ->relationship('images') // Product modelindeki images ilişkisini belirtir
                     ->schema([
@@ -40,31 +45,39 @@ class ProductResource extends Resource
                             ->directory('products/images')
                             ->image(),
                     ])
-                    ->columns(1), // Bir sütunda göstermek için
+                    ->columns(1) // Bir sütunda göstermek için
+                    ->label('Ürün Resimleri'),
                 
                 Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->label('Açıklama'),
+                    
                 Forms\Components\TextInput::make('price')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
+                    ->prefix('₺')
+                    ->label('Fiyat'),
+                    
                 Forms\Components\TextInput::make('stock')
                     ->required()
                     ->numeric()
-                    ->default(0),
+                    ->default(0)
+                    ->label('Stok'),
+                    
                 Select::make('category_id')
                     ->label('Kategori')
                     ->relationship('category', 'name')
                     ->required(),
+                    
                 Select::make('tags')
                     ->label('Etiketler')
                     ->relationship('tags', 'name')
                     ->multiple()
                     ->preload()
                     ->required(),
-                // Add the Featured checkbox
+                    
                 Forms\Components\Toggle::make('featured')
-                    ->label('Featured')
+                    ->label('Öne Çıkar')
                     ->default(false), // Default to false
             ]);
     }
@@ -74,30 +87,42 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Ürün Adı'),
+                    
                 Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
-                    Tables\Columns\ImageColumn::make('images.image_path') // Görsel sütunu ekleyin
+                    ->searchable()
+                    ->label('Slug'),
+                    
+                Tables\Columns\ImageColumn::make('images.image_path')
                     ->label('Görseller')
                     ->disk('public')
-                    ->size(50), // Görsellerin boyutunu ayarla
+                    ->size(50), 
+                    
                 Tables\Columns\TextColumn::make('price')
                     ->money()
-                    ->sortable(),
+                    ->sortable()
+                    ->label('Fiyat'),
+                    
                 Tables\Columns\TextColumn::make('stock')
                     ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('category_id')
-                    ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->label('Stok'),
+                    
+                Tables\Columns\TextColumn::make('category.name')
+                    ->sortable()
+                    ->label('Kategori'), 
+
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                    
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                    
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
@@ -105,6 +130,14 @@ class ProductResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
+                // Additional filters can be added here
+                Tables\Filters\SelectFilter::make('category_id')
+                    ->label('Kategori')
+                    ->relationship('category', 'name')
+                    ->preload()
+                    ->multiple(), // Allows filtering by multiple categories
+                Tables\Filters\TernaryFilter::make('featured')
+                    ->label('Öne Çıkan'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -119,10 +152,11 @@ class ProductResource extends Resource
             ]);
     }
 
+
     public static function getRelations(): array
     {
         return [
-            //
+            // İlişkisel yöneticiler buraya eklenebilir
         ];
     }
 

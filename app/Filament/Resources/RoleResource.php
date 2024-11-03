@@ -2,23 +2,25 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\RoleResource\Pages;
-use App\Filament\Resources\RoleResource\RelationManagers;
-use Spatie\Permission\Models\Role;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use App\Models\Role;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\RoleResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\RoleResource\RelationManagers;
 
 class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $navigationIcon = 'heroicon-o-shield-check'; // Icon for roles
+    protected static ?string $navigationGroup = 'Kullanıcı Yönetimi'; // Group name
+    
     public static function form(Form $form): Form
     {
         return $form
@@ -29,6 +31,13 @@ class RoleResource extends Resource
                 Forms\Components\TextInput::make('guard_name')
                     ->required()
                     ->maxLength(255),
+
+                // İzinleri seçebilmek için çoklu seçim bileşeni ekleyin
+                Forms\Components\Select::make('permissions')
+                    ->multiple()
+                    ->relationship('permissions', 'name')
+                    ->label('Permissions')
+                    ->preload(),
             ]);
     }
 
@@ -48,6 +57,12 @@ class RoleResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
+                // İzin kolonunu ekleyin
+                Tables\Columns\TextColumn::make('permissions.name')
+                    ->label('Permissions')
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -64,6 +79,7 @@ class RoleResource extends Resource
                 ]),
             ]);
     }
+
 
     public static function getRelations(): array
     {
@@ -89,4 +105,6 @@ class RoleResource extends Resource
                 SoftDeletingScope::class,
             ]);
     }
+
+
 }

@@ -9,6 +9,8 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\Auth\GithubAuthController;
 
 // Genel erişime açık rotalar (Giriş yapılmamış kullanıcılar erişebilir)
 Route::middleware('guest')->group(function () {
@@ -46,3 +48,11 @@ Route::middleware('auth')->group(function () {
     // Yorumlar
     Route::post('/products/{product}/comments', [CommentController::class, 'store'])->name('comments.store');
 });
+
+
+Route::get('auth/google', [GoogleAuthController::class, 'redirectToGoogle']);
+Route::get('auth/callback/google', [GoogleAuthController::class, 'handleGoogleCallback']);
+
+
+Route::get('auth/github', [GithubAuthController::class, 'redirectToGithub']);
+Route::get('auth/callback/github', [GithubAuthController::class, 'handleGithubCallback']);
