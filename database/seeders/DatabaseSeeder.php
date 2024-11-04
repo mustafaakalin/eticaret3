@@ -2,13 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Tag;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Testimonial;
+use Faker\Factory as Faker;
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
-use App\Models\Tag;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,6 +24,7 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
 
+        $faker = Faker::create();
 
         // Yönetici rolü oluşturma
         $adminRole = Role::create(['name' => 'admin']);
@@ -45,35 +50,32 @@ class DatabaseSeeder extends Seeder
         $user2->assignRole('user');
 
 
-
-        // kategori oluşturma
-        $categories = [
-            ['name' => 'Electronics'],
-            ['name' => 'Clothing'],
-            ['name' => 'Books'],
-            ['name' => 'Home & Garden'],
-            ['name' => 'Sports & Outdoors'],
-            ['name' => 'Beauty & Personal Care'],
-            ['name' => 'Automotive'],
-            ['name' => 'Toys & Games'],
-            ['name' => 'Health & Wellness'],
-            ['name' => 'Food & Beverages'],
-            ['name' => 'Office Supplies'],
-            ['name' => 'Jewelry & Watches'],
-            ['name' => 'Music'],
-            ['name' => 'Movies & TV Shows'],
-            ['name' => 'Pet Supplies'],
-            ['name' => 'Baby Products'],
-            ['name' => 'Tools & Home Improvement'],
-            ['name' => 'Gifts & Crafts'],
-            ['name' => 'Travel Accessories'],
-            ['name' => 'Photography'],
-        ];
-
-        foreach ($categories as $category) {
-            Category::create($category);
+        for ($i = 0; $i < 20; $i++) {
+            DB::table('categories')->insert([
+                'name' => $faker->word,
+                'parent_id' => 1, // Assuming some categories have parents
+                'slug' => Str::slug($faker->unique()->word),
+                'icon' => $faker->optional()->imageUrl(),
+                'description' => $faker->paragraph,
+                'products_count' => $faker->numberBetween(0, 100),
+                'is_active' => $faker->boolean,
+                'sort_order' => $faker->numberBetween(0, 100),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         }
 
+        for ($i = 0; $i < 20; $i++) {
+            DB::table('brands')->insert([
+                'name' => $faker->company,
+                'slug' => Str::slug($faker->company),
+                'logo' => $faker->optional()->imageUrl(),
+                'description' => $faker->paragraph,
+                'is_active' => $faker->boolean,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
         // etiket oluşturma
         $tags = [
@@ -109,150 +111,50 @@ class DatabaseSeeder extends Seeder
 
 
         // products oluşturma
-        $products = [
-            [
-                'name' => 'Product 1',
-                'price' => 100,
-                'description' => 'Product 1 description',
-                'category_id' => 1,
-                'featured' => 1,
-                'stock' => 10,
-                'slug' => 'product-1'
-            ],
-            [
-                'name' => 'Product 2',
-                'price' => 150,
-                'description' => 'Product 2 description',
-                'category_id' => 1,
-                'featured' => 0,
-                'stock' => 20,
-                'slug' => 'product-2'
-            ],
-            [
-                'name' => 'Product 3',
-                'price' => 200,
-                'description' => 'Product 3 description',
-                'category_id' => 2,
-                'featured' => 1,
-                'stock' => 15,
-                'slug' => 'product-3'
-            ],
-            [
-                'name' => 'Product 4',
-                'price' => 250,
-                'description' => 'Product 4 description',
-                'category_id' => 2,
-                'featured' => 0,
-                'stock' => 5,
-                'slug' => 'product-4'
-            ],
-            [
-                'name' => 'Product 5',
-                'price' => 300,
-                'description' => 'Product 5 description',
-                'category_id' => 3,
-                'featured' => 1,
-                'stock' => 8,
-                'slug' => 'product-5'
-            ],
-            [
-                'name' => 'Product 6',
-                'price' => 350,
-                'description' => 'Product 6 description',
-                'category_id' => 3,
-                'featured' => 0,
-                'stock' => 12,
-                'slug' => 'product-6'
-            ],
-            [
-                'name' => 'Product 7',
-                'price' => 400,
-                'description' => 'Product 7 description',
-                'category_id' => 4,
-                'featured' => 1,
-                'stock' => 6,
-                'slug' => 'product-7'
-            ],
-            [
-                'name' => 'Product 8',
-                'price' => 450,
-                'description' => 'Product 8 description',
-                'category_id' => 4,
-                'featured' => 0,
-                'stock' => 18,
-                'slug' => 'product-8'
-            ],
-            [
-                'name' => 'Product 9',
-                'price' => 500,
-                'description' => 'Product 9 description',
-                'category_id' => 5,
-                'featured' => 1,
-                'stock' => 7,
-                'slug' => 'product-9'
-            ],
-            [
-                'name' => 'Product 10',
-                'price' => 550,
-                'description' => 'Product 10 description',
-                'category_id' => 5,
-                'featured' => 0,
-                'stock' => 13,
-                'slug' => 'product-10'
-            ],
-            [
-                'name' => 'Product 11',
-                'price' => 600,
-                'description' => 'Product 11 description',
-                'category_id' => 6,
-                'featured' => 1,
-                'stock' => 9,
-                'slug' => 'product-11'
-            ],
-            [
-                'name' => 'Product 12',
-                'price' => 650,
-                'description' => 'Product 12 description',
-                'category_id' => 6,
-                'featured' => 0,
-                'stock' => 14,
-                'slug' => 'product-12'
-            ],
-            [
-                'name' => 'Product 13',
-                'price' => 700,
-                'description' => 'Product 13 description',
-                'category_id' => 7,
-                'featured' => 1,
-                'stock' => 11,
-                'slug' => 'product-13'
-            ],
-            [
-                'name' => 'Product 14',
-                'price' => 750,
-                'description' => 'Product 14 description',
-                'category_id' => 7,
-                'featured' => 0,
-                'stock' => 17,
-                'slug' => 'product-14'
-            ],
-            [
-                'name' => 'Product 15',
-                'price' => 800,
-                'description' => 'Product 15 description',
-                'category_id' => 8,
-                'featured' => 1,
-                'stock' => 3,
-                'slug' => 'product-15'
-            ],
-        ];
 
-        foreach ($products as $product) {
-            Product::create($product);
+        for ($i = 0; $i < 50; $i++) {
+            DB::table('products')->insert([
+                'name' => $faker->words(3, true),
+                'slug' => Str::slug($faker->words(3, true)),
+                'description' => $faker->paragraph,
+                'price' => $faker->randomFloat(2, 10, 1000),
+                'stock' => $faker->numberBetween(0, 100),
+                'category_id' => $faker->numberBetween(1, 10), // Assuming you have 10 categories
+                'brand_id' => $faker->optional()->numberBetween(1, 10), // Assuming you have 10 brands
+                'old_price' => $faker->optional()->randomFloat(2, 10, 1000),
+                'is_active' => $faker->boolean,
+                'is_featured' => $faker->boolean(20), // 20% chance of being featured
+                'is_new' => $faker->boolean(20), // 20% chance of being new
+                'discount' => $faker->optional()->numberBetween(0, 50),
+                'rating' => $faker->randomFloat(1, 0, 5),
+                'reviews_count' => $faker->numberBetween(0, 100),
+                'specifications' => json_encode([
+                    'color' => $faker->colorName,
+                    'size' => $faker->randomElement(['S', 'M', 'L', 'XL']),
+                    'material' => $faker->word,
+                ]),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         }
 
 
 
+        Testimonial::create([
+            'avatar' => 'https://avatar.iran.liara.run/public',
+            'author' => 'John Doe',
+            'content' => 'This is the best shop ever! I love the products and the service is excellent.',
+            'rating' => 4,
+            'position' => 'Software Engineer',
+        ]);
+
+        Testimonial::create([
+            'avatar' => 'https://avatar.iran.liara.run/public',
+            'author' => 'Jane Smith',
+            'content' => 'I have been shopping here for years and I am always satisfied with my purchases.',
+            'rating' => 4,
+            'position' => 'Ceo',
+        ]);
 
 
 

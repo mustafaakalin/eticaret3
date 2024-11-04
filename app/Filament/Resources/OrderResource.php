@@ -23,33 +23,49 @@ class OrderResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-credit-card'; // Change to a receipt icon
     protected static ?string $navigationGroup = 'Sipariş Yönetimi'; // Grouping under a relevant category
 
-    public static function form(Form $form): Form
+    public static function form(Forms\Form $form): Forms\Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('user_id')
-                    ->label('User')
-                    ->options(function () {
-                        $user = auth()->user(); // Authenticated user'ı al
+                Forms\Components\Card::make()
+                    ->schema([
+                        Forms\Components\Select::make('user_id')
+                            ->label('User')
+                            ->options(function () {
+                                $user = auth()->user();
 
-                        // Eğer kullanıcı admin değilse, yalnızca kendisi
-                        return $user->hasRole('admin')
-                            ? User::all()->pluck('name', 'id') // Admin tüm kullanıcıları görebilir
-                            : User::where('id', $user->id)->pluck('name', 'id'); // Normal kullanıcı yalnızca kendisini görebilir
-                    })
-                    ->searchable()
-                    ->required(),
-                Forms\Components\TextInput::make('total_price')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\Select::make('status')
-                    ->required()
-                    ->options([
-                        'pending' => 'Bekleniyor',
-                        'shipped' => 'Kargoya Verildi',
-                        'completed' => 'Tamamlandı',
+                                // Admin, tüm kullanıcıları görebilir; aksi durumda kullanıcı yalnızca kendisini görebilir
+                                return $user->hasRole('admin')
+                                    ? User::all()->pluck('name', 'id')
+                                    : User::where('id', $user->id)->pluck('name', 'id');
+                            })
+                            ->searchable()
+                            ->required(),
+
+                        Forms\Components\TextInput::make('total_price')
+                            ->label('Toplam Fiyat')
+                            ->required()
+                            ->numeric()
+                            ->prefix('₺'),
                     ])
-                    ->default('pending'),
+                    ->columnSpanFull()
+                    ->label('Order Information'), // Kullanıcı ve fiyat bilgileri için bir kart
+
+                Forms\Components\Section::make('Order Status') // Durum seçimi için bir bölüm
+                    ->schema([
+                        Forms\Components\Select::make('status')
+                            ->label('Durum')
+                            ->required()
+                            ->options([
+                                'pending' => 'Bekleniyor',
+                                'shipped' => 'Kargoya Verildi',
+                                'completed' => 'Tamamlandı',
+                            ])
+                            ->default('pending')
+                            ->columnSpan(2),
+                    ])
+                    ->description('Siparişin güncel durumu')
+                    ->collapsible(), // Bu bölümü katlanabilir yapıyor
             ]);
     }
 
@@ -160,5 +176,9 @@ class OrderResource extends Resource
     public static function canView(Model $record): bool
     {
         return Auth::user()->hasRole('admin') || Auth::id() === $record->user_id;
+    }
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }

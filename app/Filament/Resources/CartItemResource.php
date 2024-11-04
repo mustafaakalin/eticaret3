@@ -13,6 +13,11 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Section;
 
 class CartItemResource extends Resource
 {
@@ -22,26 +27,37 @@ class CartItemResource extends Resource
     protected static ?string $navigationGroup = 'Sepet Yönetimi'; // Grouping under a relevant category
 
     public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\Select::make('cart_id')
-                    ->relationship('cart', 'id') // Assuming a Cart relationship
-                    ->required()
-                    ->label('Cart ID'),
-                    
-                Forms\Components\Select::make('product_id')
-                    ->relationship('product', 'name') // Use product name for better UX
-                    ->required()
-                    ->label('Ürün'),
-                    
-                Forms\Components\TextInput::make('quantity')
-                    ->required()
-                    ->numeric()
-                    ->minValue(1) // Set minimum quantity to 1
-                    ->label('Miktar'),
-            ]);
-    }
+{
+    return $form
+        ->schema([
+            Card::make([
+                Grid::make(2) // İki sütunlu bir düzen ile
+                    ->schema([
+                        Select::make('cart_id')
+                            ->relationship('cart', 'id')
+                            ->required()
+                            ->label('Cart ID')
+                            ->placeholder('Bir sepet seçin'),
+                        
+                        Select::make('product_id')
+                            ->relationship('product', 'name')
+                            ->required()
+                            ->label('Ürün')
+                            ->placeholder('Bir ürün seçin'),
+                    ]),
+                
+                Section::make('Detaylar') // Detaylar için bir bölüm
+                    ->schema([
+                        TextInput::make('quantity')
+                            ->required()
+                            ->numeric()
+                            ->minValue(1)
+                            ->label('Miktar')
+                            ->placeholder('Adet sayısını girin'),
+                    ]),
+            ]),
+        ]);
+}
 
     public static function table(Table $table): Table
     {
@@ -114,5 +130,9 @@ class CartItemResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }

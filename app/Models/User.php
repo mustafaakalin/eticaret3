@@ -10,10 +10,11 @@ use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable implements FilamentUser, HasAvatar
+class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable,HasRoles,SoftDeletes;
@@ -78,5 +79,12 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         return $this->hasMany(Comment::class);
     }
 
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            // Varsayılan rol ataması
+            $user->assignRole('user');
+        });
+    }
 
 }

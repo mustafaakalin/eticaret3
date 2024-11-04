@@ -13,6 +13,13 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Placeholder;
 
 class CategoryResource extends Resource
 {
@@ -22,25 +29,50 @@ class CategoryResource extends Resource
     protected static ?string $navigationGroup = 'Ürün Yönetimi'; // Group name
     
     public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255)
-                    ->label('Kategori Adı'),
-                    
-                Forms\Components\Textarea::make('description')
-                    ->label('Açıklama')
-                    ->columnSpanFull(),
-                    
-                Select::make('parent_id')
-                    ->relationship('parent', 'name')
-                    ->label('Ebeveyn Kategori')
-                    ->nullable()
-                    ->searchable(), // Allow searching for parent categories
-            ]);
-    }
+{
+    return $form
+        ->schema([
+            Card::make([
+                Tabs::make('Kategori Bilgisi') // Ana bilgileri 'Kategori Bilgisi' tabı altında
+                    ->tabs([
+                        Tabs\Tab::make('Genel')
+                            ->schema([
+                                TextInput::make('name')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->label('Kategori Adı')
+                                    ->placeholder('Kategorinin adını girin'),
+
+                                Textarea::make('description')
+                                    ->label('Açıklama')
+                                    ->columnSpanFull()
+                                    ->placeholder('Kategori hakkında kısa bir açıklama girin'),
+                            ]),
+                        
+                        Tabs\Tab::make('Ayarlar')
+                            ->schema([
+                                Section::make('Kategori Ayarları')
+                                    ->schema([
+                                        Select::make('parent_id')
+                                            ->relationship('parent', 'name')
+                                            ->label('Ebeveyn Kategori')
+                                            ->nullable()
+                                            ->searchable()
+                                            ->placeholder('Üst kategori seçin'),
+                                    ]),
+                            ]),
+                    ]),
+                
+                Section::make('Diğer Bilgiler')
+                    ->schema([
+                        Placeholder::make('Ek bilgi alanı')
+                            ->content('Bu bölümde ek bilgiler görüntülenecektir.'),
+                    ])
+                    ->collapsible() // Bu bölümü gizlenebilir yapar
+                    ->collapsed(), // Varsayılan olarak gizlenmiş açılır
+            ]),
+        ]);
+}
 
     public static function table(Table $table): Table
     {
@@ -109,5 +141,9 @@ class CategoryResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }

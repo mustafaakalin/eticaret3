@@ -19,7 +19,7 @@ class CartController extends Controller
 
         // Kullanıcı oturum açmadıysa, kayıt sayfasına yönlendir
         if (!$userId) {
-            return redirect()->route('register')->with('warning', 'Alışveriş yapabilmek için kayıt olmanız gerekli.');
+            return redirect()->route('filament.admin.auth.register')->with('warning', 'Alışveriş yapabilmek için kayıt olmanız gerekli.');
         }
 
         // Kullanıcının sepetini bul veya oluştur

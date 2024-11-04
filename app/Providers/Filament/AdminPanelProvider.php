@@ -2,27 +2,28 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
-use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Filament\PanelProvider;
+use Filament\Support\Colors;
+use Filament\Support\Colors\Color;
+use Filament\Http\Middleware\Authenticate;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use DutchCodingCompany\FilamentSocialite\Provider;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
 
-use DutchCodingCompany\FilamentSocialite\FilamentSocialitePlugin;
-use DutchCodingCompany\FilamentSocialite\Provider;
-use Filament\Support\Colors;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Laravel\Socialite\Contracts\User as SocialiteUserContract;
-use Illuminate\Contracts\Auth\Authenticatable;
+use DutchCodingCompany\FilamentSocialite\FilamentSocialitePlugin;
+use Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
 
 
 class AdminPanelProvider extends PanelProvider
@@ -34,6 +35,9 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->registration()
+            ->passwordReset()
+            ->emailVerification()
             ->colors([
                 'primary' => Color::Amber,
             ])

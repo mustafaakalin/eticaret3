@@ -11,7 +11,37 @@ class Product extends Model
     use SoftDeletes;
     use Searchable;
 
-    protected $fillable = ['name', 'slug', 'description', 'price', 'stock', 'category_id', 'featured'];
+    protected $fillable = [
+        'category_id',
+        'brand_id',
+        'name',
+        'slug',
+        'description',
+        'price',
+        'old_price',
+        'stock',
+        'is_active',
+        'is_featured',
+        'is_new',
+        'discount',
+        'rating',
+        'reviews_count',
+        'specifications',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+        'is_featured' => 'boolean',
+        'is_new' => 'boolean',
+        'specifications' => 'array',
+    ];
+
+
+
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
+    }
 
 
     public function category()

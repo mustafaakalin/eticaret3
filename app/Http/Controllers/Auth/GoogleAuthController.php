@@ -30,6 +30,10 @@ class GoogleAuthController extends Controller
             ]);
         }
 
+
+        // Varsayılan rol ataması
+        $user->assignRole('user');
+        
         // Kullanıcıyı oturum aç
         Auth::login($user, true);
 

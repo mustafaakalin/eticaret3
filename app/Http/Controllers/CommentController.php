@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use Filament\Notifications\Notification;
+
 
 class CommentController extends Controller
 {
@@ -11,7 +13,8 @@ class CommentController extends Controller
     {
         // Kullanıcı oturumu kontrolü
         if (!auth()->check()) {
-            return redirect()->route('login')->with('error', 'You need to be logged in to add a review.');
+            return redirect()->route('filament.admin.auth.login')->with('error', 'You need to be logged in to add a review.');
+
         }
 
         // Doğrulama işlemi

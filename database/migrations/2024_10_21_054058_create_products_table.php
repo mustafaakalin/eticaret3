@@ -19,6 +19,16 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->integer('stock')->default(0);
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->foreignId('brand_id')->nullable()->constrained()->onDelete('set null');
+            $table->decimal('old_price', 10, 2)->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->boolean('is_featured')->default(false);
+            $table->boolean('is_new')->default(false);
+            $table->integer('discount')->nullable();
+            $table->decimal('rating', 2, 1)->default(0);
+            $table->integer('reviews_count')->default(0);
+            $table->json('specifications')->nullable();
+
             $table->softDeletes();
             $table->timestamps();
         });
